@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Registration - DreamFM</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a0a1e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+        
+        .register-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(171, 71, 188, 0.2);
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-section h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ab47bc, #e91e63);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .logo-section p {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #b0b0b0;
+        }
+        
+        .form-group label .required {
+            color: #ff5252;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ab47bc;
+            background: rgba(171, 71, 188, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #666;
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .password-toggle input {
+            padding-right: 45px;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #b0b0b0;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ab47bc, #e91e63);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(171, 71, 188, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #b0b0b0;
+        }
+        
+        .login-link a {
+            color: #ab47bc;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: none;
+        }
+        
+        .alert.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #81c784;
+        }
+        
+        .alert.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #e57373;
+        }
+        
+        .info-box {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .info-box h3 {
+            font-size: 0.9rem;
+            color: #ff9800;
+            margin-bottom: 8px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            font-size: 0.8rem;
+            color: #b0b0b0;
+        }
+        
+        .info-box ul li {
+            padding: 5px 0;
+        }
+        
+        .info-box ul li i {
+            color: #4caf50;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            .register-container {
+                padding: 30px 20px;
+            }
+            
+            .logo-section h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="register-container">
+        <div class="logo-section">
+            <h1>🎨 DreamFM Creator</h1>
+            <p>Join as a Creator & Share Your Audiobooks</p>
+        </div>
+        
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert"></div>
+        
+        <!-- Info Box -->
+        <div class="info-box">
+            <h3>📋 Creator Benefits:</h3>
+            <ul>
+                <li><i class="fa-solid fa-check"></i> Upload unlimited audiobooks</li>
+                <li><i class="fa-solid fa-check"></i> Earn ₹20 per subscriber/month</li>
+                <li><i class="fa-solid fa-check"></i> Build your audience</li>
+                <li><i class="fa-solid fa-check"></i> Monthly payouts</li>
+            </ul>
+        </div>
+        
+        <!-- Registration Form -->
+        <form id="registerForm">
+            
+            <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="channelName">Channel/Creator Name <span class="required">*</span></label>
+                <input type="text" id="channelName" name="channelName" placeholder="BlueFM Official" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" placeholder="creator@example.com" required>
+            </div>
+            
+            <div class="form-group password-toggle">
+                <label for="password">Password <span class="required">*</span></label>
+                <input type="password" id="password" name="password" placeholder="Minimum 6 characters" required minlength="6">
+                <button type="button" class="password-toggle-btn" onclick="togglePassword('password')">
+                    <i class="fa-solid fa-eye" id="password-icon"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label for="youtubeUrl">YouTube Channel URL (Optional)</label>
+                <input type="url" id="youtubeUrl" name="youtubeUrl" placeholder="https://youtube.com/@yourchannel">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">About You (Optional)</label>
+                <textarea id="description" name="description" placeholder="Tell us about your channel and content..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fa-solid fa-user-plus"></i> Register as Creator
+            </button>
+            
+        </form>
+        
+        <div class="login-link">
+            Already have an account? <a href="creator-login.html">Login here</a>
+        </div>
+        
+        <div class="login-link" style="margin-top: 10px;">
+            <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+        </div>
+    </div>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script src="firebase-config.js"></script>
+    <script src="creator-auth.js"></script>
+    
+    <script>
+        // Initialize Firebase (if not already)
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyAxXvJt6m-IK2G_EstbvYQZBj5wMBaqFeM",
+                authDomain: "dreamfm-a6694.firebaseapp.com",
+                projectId: "dreamfm-a6694",
+                storageBucket: "dreamfm-a6694.firebasestorage.app",
+                messagingSenderId: "634304814330",
+                appId: "1:634304814330:web:e4fd0cd5e36276c37d3d43"
+            });
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Password Toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Show Alert
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = 'alert ' + type;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Form Submit
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
+            
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                channelName: document.getElementById('channelName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value,
+                youtubeUrl: document.getElementById('youtubeUrl').value.trim(),
+                description: document.getElementById('description').value.trim()
+            };
+            
+            const result = await window.registerCreator(formData);
+            
+            if (result.success) {
+                showAlert(result.message, 'success');
+                
+                // Clear form
+                document.getElementById('registerForm').reset();
+                
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'creator-login.html';
+                }, 2000);
+                
+            } else {
+                showAlert(result.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Register as Creator';
+            }
+        });
+    </script>
+</body>
+</html>
