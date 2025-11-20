@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d0d0d">
+    <meta name="description" content="Stream premium audiobooks anytime with DreamFM">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DreamFM">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
+    <title>DreamFM - Premium Audiobooks</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Razorpay SDK (Optional - Uncomment for real payments) -->
+    <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+    
+    <!-- Firebase SDK (Modular) -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxXvJt6m-IK2G_EstbvYQZBj5wMBaqFeM",
+            authDomain: "dreamfm-a6694.firebaseapp.com",
+            projectId: "dreamfm-a6694",
+            storageBucket: "dreamfm-a6694.firebasestorage.app",
+            messagingSenderId: "634304814330",
+            appId: "1:634304814330:web:e4fd0cd5e36276c37d3d43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.auth = getAuth(app);
+        window.db = getFirestore(app);
+        window.currentUser = null;
+
+        onAuthStateChanged(window.auth, async (user) => {
+            if (!user) {
+                console.log('❌ Not authenticated');
+                window.location.href = 'login.html';
+            } else {
+                console.log('✅ Authenticated:', user.email);
+                window.currentUser = user;
+                
+                // Initialize user in Firebase (coins system)
+                if (window.initializeUserInFirebase) {
+                    await window.initializeUserInFirebase(user);
+                }
+                
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+            }
+        });
+
+        window.logout = async function() {
+            try {
+                if (window.clearAudioCache) await window.clearAudioCache();
+                await signOut(window.auth);
+                localStorage.clear();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+    </script>
+</head>
+<body>
+    
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="install-prompt" style="display:none;">
+        <div class="install-content">
+            <span class="install-icon">📱</span>
+            <div class="install-text">
+                <strong>Install DreamFM</strong>
+                <p>Get offline access!</p>
+            </div>
+            <button id="installBtn" class="btn-install">Install</button>
+            <button id="dismissBtn" class="btn-dismiss">✕</button>
+        </div>
+    </div>
+
+    <!-- Auth Loading -->
+    <div id="authLoading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0d0d0d; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="text-align: center; color: white;">
+            <div style="width: 50px; height: 50px; border: 4px solid rgba(171, 71, 188, 0.3); border-top-color: #ab47bc; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <p>Loading DreamFM...</p>
+        </div>
+    </div>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+
+    <!-- Main App -->
+    <div id="app" style="display: none;">
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading audiobooks...</p>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#home" class="nav-item active" data-page="home">
+                <i class="fa-solid fa-house"></i>
+                <span>HOME</span>
+            </a>
+            <a href="#membership" class="nav-item" data-page="membership">
+                <i class="fa-solid fa-crown"></i>
+                <span>PREMIUM</span>
+            </a>
+            <a href="#profile" class="nav-item" data-page="profile">
+                <i class="fa-solid fa-user"></i>
+                <span>PROFILE</span>
+            </a>
+        </nav>
+
+        <!-- Mini Player -->
+        <div id="miniPlayer" class="mini-player" style="display:none;">
+            <div class="mini-player-content">
+                <img id="miniCover" class="mini-cover" src="">
+                <div class="mini-info">
+                    <div id="miniTitle" class="mini-title">Book Title</div>
+                    <div id="miniChapter" class="mini-chapter">Chapter 1</div>
+                </div>
+                <div class="mini-controls">
+                    <button id="miniPlayBtn" class="mini-btn">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                </div>
+                <div class="mini-progress-container">
+                    <div id="miniProgressBar" class="mini-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Player -->
+        <div id="fullPlayer" class="full-player" style="display:none;">
+            <div class="full-player-content">
+                <button id="closePlayer" class="close-player-btn">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                
+                <div class="player-cover-container">
+                    <img id="playerCoverImg" class="player-cover-img" src="">
+                </div>
+                
+                <div class="player-book-info">
+                    <h2 id="playerBookTitle">Book Title</h2>
+                    <p id="playerAuthor">Author Name</p>
+                    <p id="playerChapterTitle">Chapter 1</p>
+                </div>
+                
+                <div class="player-progress-section">
+                    <div class="time-display">
+                        <span id="currentTimeDisplay">0:00</span>
+                        <span id="durationDisplay">0:00</span>
+                    </div>
+                    <input type="range" id="seekBar" class="seek-bar" value="0" min="0" max="100">
+                </div>
+                
+                <div class="player-main-controls">
+                    <button id="prevChapterBtn" class="control-btn">
+                        <i class="fa-solid fa-backward-step"></i>
+                    </button>
+                    <button id="playPauseBtn" class="control-btn play-pause-btn">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button id="nextChapterBtn" class="control-btn">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+                </div>
+                
+                <div class="player-additional-controls">
+                    <button id="speedBtn" class="small-btn">1.0x</button>
+                    <input type="range" id="volumeSlider" class="volume-slider" value="100" min="0" max="100">
+                    <button id="chaptersBtn" class="small-btn">
+                        <i class="fa-solid fa-list"></i> Chapters
+                    </button>
+                </div>
+                
+                <div id="chaptersList" class="chapters-list" style="display:none;">
+                    <h3>Chapters</h3>
+                    <div id="chaptersContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <audio id="audioElement"></audio>
+    </div>
+
+    <!-- Firebase Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyAxXvJt6m-IK2G_EstbvYQZBj5wMBaqFeM",
+                authDomain: "dreamfm-a6694.firebaseapp.com",
+                projectId: "dreamfm-a6694",
+                storageBucket: "dreamfm-a6694.firebasestorage.app",
+                messagingSenderId: "634304814330",
+                appId: "1:634304814330:web:e4fd0cd5e36276c37d3d43"
+            });
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+
+    <!-- App Scripts (ORDER MATTERS!) -->
+    <script src="coins.js"></script>
+    <script src="player.js"></script>
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
+    <script src="pwa-install.js"></script>
+</body>
+</html>

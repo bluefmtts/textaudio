@@ -1,0 +1,13 @@
+{
+  "name": "DreamFM - Premium Audiobooks",
+  "short_name": "DreamFM",
+  "description": "Stream premium audiobooks anytime, anywhere",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e27",
+  "theme_color": "#4f8ff7",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["entertainment", "books", "education"],
+  "icons": []
+}
